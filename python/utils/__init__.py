@@ -33,7 +33,7 @@ class ColorFormatter(logging.Formatter):
         return Fore.CYAN + original + Fore.RESET
 
 
-class _ColorLogger(logging.Logger):
+class __ColorLogger(logging.Logger):
     def __init__(self, name):
         logging.Logger.__init__(self, name, logging.DEBUG)
         color_formatter = ColorFormatter("%(asctime)s | %(levelname)8s | %(name)16s : %(message)s")
@@ -42,8 +42,8 @@ class _ColorLogger(logging.Logger):
         self.addHandler(console)
 
 
-def _main():
-    logging.setLoggerClass(_ColorLogger)
+def __main():
+    logging.setLoggerClass(__ColorLogger)
     logger = logging.getLogger(__name__)
     logger.info("This is an info message")
     logger.warning("This is a warning message")
@@ -53,7 +53,7 @@ def _main():
 
 
 if __name__ == "__main__":
-    _main()
+    __main()
 
 def setup_configs(config: Dict[str, Union[str, None]]) -> Tuple[Dict[str, Union[str, None]], Dict[str, Union[str, None]]]:
     new_config = config.copy()
