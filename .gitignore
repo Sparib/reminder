@@ -1,0 +1,6 @@
+.env
+__pycache__/
+/python/venv/Lib/
+*.log
+*.tar
+*.t

@@ -1,0 +1,9 @@
+{
+    "python.defaultInterpreterPath": ".\\python\\venv\\Scripts\\python.exe",
+    "python.analysis.extraPaths": [
+        "C:\\Users\\spari\\Documents\\Pythons\\trello_stuff\\python\\venv\\Lib\\site-packages"
+    ],
+    "python.autoComplete.extraPaths": [
+        "C:\\Users\\spari\\Documents\\Pythons\\trello_stuff\\python\\venv\\Lib\\site-packages"
+    ]
+}
