@@ -36,6 +36,7 @@ class BotClient(discord.Client):
         super().__init__(*args, **kwargs)
         self.seen_today_desktop = False
         self.seen_today_mobile = False
+        self.send_now = True
 
     async def on_ready(self):
         logger.info("Successfully logged in to " + self.user.name)
@@ -45,31 +46,17 @@ class BotClient(discord.Client):
 
     async def on_member_update(self, before: discord.Member, after: discord.Member) -> None:
         logger.info(f"{after.display_name} updated | Old Status: {before.status} | New Status: {after.status}")
+        logger.info(after.id)
+        if after.id != 362355607367581716: return
         if self.seen_today_desktop and self.seen_today_mobile: return
-        # if int(datetime.now().hour) < 14: return
+        if int(datetime.now().hour) < 14: return
         if str(after.status).lower() != "online": return
         logger.info(f"{after.mobile_status} {after.desktop_status}")
         if not self.seen_today_mobile and after.is_on_mobile():
             # Mobile stuff
-            embed = discord.Embed(
-                title="Due Today",
-                color=0xff8000
-            )
-            cards = (await self.get_cards())
-            for name in cards: embed.add_field(name=name, value=cards[name], inline=False)
-            await (self.get_user(362355607367581716)).send(embed=embed)
-            self.seen_today_mobile = True
+            await self.send_embed()
         elif not self.seen_today_desktop and str(after.desktop_status).lower() == "online":
-            if not self.seen_today_mobile:
-                # Mobile stuff
-                embed = discord.Embed(
-                    title="Due Today",
-                    color=0xff8000
-                )
-                cards = (await self.get_cards())
-                for name in cards: embed.add_field(name=name, value=cards[name], inline=False)
-                await (self.get_user(362355607367581716)).send(embed=embed)
-                self.seen_today_mobile = True
+            if not self.seen_today_mobile: await self.send_embed()
             else: await (self.get_user(362355607367581716)).send("Check due")
             self.seen_today_desktop = True
 
@@ -101,14 +88,30 @@ class BotClient(discord.Client):
                         dict[f"{card['name']} | In {card['labels'][0]['name']}"] = f"Due <t:{int(date.timestamp())}:t>"                        
         return dict
 
+    async def send_embed(self) -> None:
+        embed = discord.Embed(
+            title="Due Today",
+            color=0xff8000
+        )
+        cards = (await self.get_cards())
+        for name in cards: embed.add_field(name=name, value=cards[name], inline=False)
+        await (self.get_user(362355607367581716)).send(embed=embed)
+        self.seen_today_mobile = True
+        self.send_now = False
+        logger.info("Send")
 
-    async def reset_day_task(self) -> None:
+    async def schedules(self) -> None:
         schedule.every().day.do(self.reset_day)
+        schedule.every().day.at("14:00").do(self.was_online)
+        schedule.every(10).seconds.do(self.was_online)
         while True:
             schedule.run_pending()
+            if self.send_now: (await self.send_embed())
             await asyncio.sleep(1)
 
-    def reset_day(self) -> None: self.seen_today_desktop = False; self.seen_today_mobile = False
+    def reset_day(self) -> None: self.seen_today_desktop = False; self.seen_today_mobile = False; logger.info("Reset")
+    def was_online(self) -> None:
+        if str(self.get_user(362355607367581716).status).lower() == "online": self.send_now = True
 
 def main():
     intents = discord.Intents.default(); intents.typing = False; intents.presences = True; intents.members = True
@@ -117,9 +120,10 @@ def main():
     # loop.run_until_complete(client.get_cards())
     # return
     try:
-        loop.run_until_complete(client.start(config["TOKEN"]))
-    except KeyboardInterrupt:
-        loop.run_until_complete(client.close())
+        # loop.run_until_complete(client.start(config["TOKEN"]))
+        loop.run_until_complete(client.schedules())
+    except KeyboardInterrupt: pass
+        # loop.run_until_complete(client.close())
     finally:
         loop.close()
         logging.info("CLOSING")
