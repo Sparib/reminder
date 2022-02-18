@@ -6,6 +6,8 @@ The env file is structured as:
 ```
 TOKEN=<discord bot token>
 INVITE_LINK=<invite link for bot>
+USER_ID=<ID of user to watch and DM>
+GUILD_ID=<ID of guild user is in>
 TRELLO_TOKEN=<trello api token>
 TRELLO_KEY=<trello api key>
 TRELLO_BOARD=<trello board id>

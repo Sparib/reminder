@@ -37,25 +37,25 @@ class BotClient(discord.Client):
         self.seen_today_desktop = False
         self.seen_today_mobile = False
         self.send_now = True
-        self.sparib: discord.Member = None
+        self.member: discord.Member = None
 
     async def on_ready(self):
         await self.wait_until_ready()
         logger.info("Successfully logged in to " + self.user.name)
-        self.sparib = self.get_guild(697159933518676028).get_member(362355607367581716)
-        if self.sparib is None or self.sparib is None: raise Exception("ID for Sparib no worko")
-        logger.info("Cached user 362355607367581716: " + self.sparib.name)
+        self.member = self.get_guild(config["GUILD_ID"]).get_member(config["USER_ID"])
+        if self.member is None or self.member is None: raise Exception("ID for Sparib no worko")
+        logger.info("Cached user 362355607367581716: " + self.member.name)
         # await self.get_cards()
         # await self.close()
-        if self.sparib.dm_channel is None: await self.sparib.create_dm()
-        logger.info(self.sparib.dm_channel)
+        if self.member.dm_channel is None: await self.member.create_dm()
+        logger.info(self.member.dm_channel)
         # async for message in self.get_user(362355607367581716).dm_channel.history(): await message.delete(); await asyncio.sleep(1)
         await self.schedules()
 
     async def on_member_update(self, before: discord.Member, after: discord.Member) -> None:
         logger.info(f"{after.display_name} updated | Old Status: {before.status} | New Status: {after.status}")
         logger.info(after.id)
-        if after.id != self.sparib.id: return
+        if after.id != self.member.id: return
         if self.seen_today_desktop and self.seen_today_mobile: return
         if int(datetime.now().hour) < 14: return
         if str(after.status).lower() != "online": return
@@ -65,7 +65,7 @@ class BotClient(discord.Client):
             await self.send_embed()
         elif not self.seen_today_desktop and str(after.desktop_status).lower() == "online":
             if not self.seen_today_mobile: await self.send_embed()
-            else: await self.sparib.send("Check due")
+            else: await self.member.send("Check due")
             self.seen_today_desktop = True
 
     async def get_cards(self) -> Dict[str, str]:
@@ -103,7 +103,7 @@ class BotClient(discord.Client):
         )
         cards = (await self.get_cards())
         for name in cards: embed.add_field(name=name, value=cards[name], inline=False)
-        await self.sparib.send(embed=embed)
+        await self.member.send(embed=embed)
         self.seen_today_mobile = True
         self.send_now = False
         logger.info("Send")
@@ -120,9 +120,9 @@ class BotClient(discord.Client):
     def reset_day(self) -> None: self.seen_today_desktop = False; self.seen_today_mobile = False; logger.info("Reset")
     def was_online(self) -> None:
         # logger.info(self.sparib)
-        if str(self.sparib.status).lower() == "online":
+        if str(self.member.status).lower() == "online":
             self.send_now = True
-            if str(self.sparib.desktop_status).lower() == "online": self.seen_today_desktop = True
+            if str(self.member.desktop_status).lower() == "online": self.seen_today_desktop = True
 
 def main():
     intents = discord.Intents.default(); intents.typing = False; intents.presences = True; intents.members = True
