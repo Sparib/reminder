@@ -16,3 +16,4 @@ TRELLO_LIST=<trello list name to get cards from>
 TRELLO_BOARD_URL=https://api.trello.com/1/boards/${TRELLO_BOARD}/lists?key=${TRELLO_KEY}&token=${TRELLO_TOKEN}
 # \/ The python .format string for the list \/
 TRELLO_LIST_URL=https://api.trello.com/1/lists/{}/cards?key=${TRELLO_KEY}&token=${TRELLO_TOKEN}
+```
