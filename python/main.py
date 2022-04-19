@@ -1,20 +1,16 @@
-import time
 from typing import Dict
 import discord
 import logging
 import asyncio
 import sys
-import colorama
 import datetime
 import schedule
 import aiohttp
-import json
 import pytz
 from dotenv import dotenv_values
 from utils import ColorFormatter, setup_configs
-from datetime import datetime, tzinfo
-from os import environ
-from colorama import init, Fore
+from datetime import datetime
+from colorama import init
 
 init()
 
@@ -30,6 +26,9 @@ logger.addHandler(console)
 
 config, trello = setup_configs(dotenv_values())
 
+# FIXME: Mobile to desktop handling doesn't work
+# TODO: Write my own time keeper for async stuff bc schedule is terrible
+# Another TODO: Probably make it so that github pushes make the docker file
 
 class BotClient(discord.Client):
     def __init__(self, *args, **kwargs): 
@@ -109,7 +108,7 @@ class BotClient(discord.Client):
         logger.info("Send")
 
     async def schedules(self) -> None:
-        schedule.every().day.do(self.reset_day)
+        schedule.every().day.at("00:00").do(self.reset_day)
         schedule.every().day.at("14:00").do(self.was_online)
         # schedule.every(10).seconds.do(self.was_online)
         while True:
