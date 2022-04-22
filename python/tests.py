@@ -2,6 +2,7 @@ from typing import Dict
 
 import dotenv
 import aiohttp, asyncio, json as jsons, requests
+from datetime import datetime
 from utils import setup_configs
 from dotenv import dotenv_values
 from functools import wraps
@@ -11,18 +12,7 @@ from asyncio.proactor_events import _ProactorBasePipeTransport
     
 
 if __name__ == "__main__":
-    # loop = asyncio.new_event_loop()
-    # f1 = loop.create_task(main())
-    # try:
-    #     loop.run_until_complete(f1)
-    # finally:
-    #     loop.close()
-    # env_test()
-    # config, trello = setup_configs(dotenv_values())
-    # for key in config: print(f"CONFIG {key}: {config[key]}")
-    # for key in trello: print(f"TRELLO {key}: {trello[key]}")
-    init()
-    print(f"{Fore.GREEN}Python 3.8 says hello in green!{Style.RESET_ALL}")
+    print(datetime.now().weekday())
     exit(0)
 
 # def silence_event_loop_closed(func):
