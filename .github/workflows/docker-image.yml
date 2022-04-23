@@ -8,6 +8,17 @@ on:
 
 jobs:
 
+  login:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Login to Registry
+        uses: docker/login-activity@v1.14.1
+        with:
+          registry: docker.sparib.com
+          username: ${{ secrets.REG_USER }}
+          password: ${{ secrets.REG_PASS }}
+
   build:
 
     runs-on: ubuntu-latest
