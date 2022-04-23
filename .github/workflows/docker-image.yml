@@ -13,7 +13,7 @@ jobs:
     steps:
       -
         name: Login to Registry
-        uses: docker/login-activity@v1.14.1
+        uses: docker/login-action@v1.14.1
         with:
           registry: docker.sparib.com
           username: ${{ secrets.REG_USER }}
@@ -26,4 +26,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile -t sparib/reminder --push
+      run: docker build . --file Dockerfile -t docker.sparib.com/reminder --push
