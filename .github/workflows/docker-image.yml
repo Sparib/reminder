@@ -26,4 +26,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile -t docker.sparib.com/reminder --push
+      run: docker buildx build -t docker.sparib.com/reminder --push .
