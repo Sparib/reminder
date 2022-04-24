@@ -1,0 +1,24 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build_docker:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Login to Registry
+      uses: docker/login-action@v1.14.1
+      with:
+        registry: docker.sparib.com
+        username: ${{ secrets.REG_USER }}
+        password: ${{ secrets.REG_PASS }}
+    - name: Build the Docker image
+      run: docker buildx build -t docker.sparib.com/reminder --push .
