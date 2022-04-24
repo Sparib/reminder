@@ -62,5 +62,5 @@ def setup_configs(config: Dict[str, Union[str, None]]) -> Tuple[Dict[str, Union[
         if not key.startswith("TRELLO_"): continue
         trello[key.replace("TRELLO_", "")] = config[key]
         new_config.pop(key)
-    config = new_config
+    config = dict(new_config)
     return config, trello
