@@ -9,7 +9,6 @@ on:
 jobs:
 
   build_docker:
-    environment: docker
 
     runs-on: ubuntu-latest
 
@@ -22,9 +21,7 @@ jobs:
         username: ${{ secrets.REG_USER }}
         password: ${{ secrets.REG_PASS }}
     - name: Build the Docker image
-      env:
-        ENV_FILE: ${{ secrets.ENV_FILE }}
-      run: docker buildx build -t docker.sparib.com/reminder --push -e "ENV_FILE=$ENV_FILE" .
+      run: docker buildx build -t docker.sparib.com/reminder --push .
     - name: Send update hook
       uses: johannes-huther/webhook.sh@v1.0.0
       env:
