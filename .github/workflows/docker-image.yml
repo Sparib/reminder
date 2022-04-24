@@ -23,8 +23,9 @@ jobs:
 #     - name: Build the Docker image
 #       run: docker buildx build -t docker.sparib.com/reminder --push .
     - name: Send update hook
-      uses: navied/secure-webhook@0.2.1
+      uses: johannes-huther/webhook.sh@v1.0.0
       with:
-        url: https://docker.sparib.com/
-        hmacSecret: ${{ secrets.WEB_SECRET }}
+        webhook_url: https://docker.sparib.com/
+        webhook_ecret: ${{ secrets.WEB_SECRET }}
+        webhook_type: json
       
