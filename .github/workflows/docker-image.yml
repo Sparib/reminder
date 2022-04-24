@@ -25,7 +25,7 @@ jobs:
     - name: Send update hook
       uses: johannes-huther/webhook.sh@v1.0.0
       with:
-        webhook_url: https://docker.sparib.com/
-        webhook_ecret: ${{ secrets.WEB_SECRET }}
+        webhook_url: http://docker.sparib.com/
+        webhook_secret: ${{ secrets.WEB_SECRET }}
         webhook_type: json
       
