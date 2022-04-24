@@ -22,3 +22,10 @@ jobs:
         password: ${{ secrets.REG_PASS }}
     - name: Build the Docker image
       run: docker buildx build -t docker.sparib.com/reminder --push .
+    - name: Send update hook
+      uses: distributhor/workflow-webhook@v2
+      with:
+        webhook_url: docker.sparib.com
+        webhook_secret: ${{ secrets.WEB_SECRET }}
+        webhook_type: json
+      
