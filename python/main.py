@@ -31,6 +31,9 @@ if 'ENV_FILE' in os.environ:
 else:
     config, trello = setup_configs(dotenv_values())
 
+logger.info(config)
+logger.info(trello)
+
 class BotClient(discord.Client):
     def __init__(self, *args, **kwargs): 
         super().__init__(*args, **kwargs)
