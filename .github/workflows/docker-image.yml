@@ -23,9 +23,8 @@ jobs:
     - name: Build the Docker image
       run: docker buildx build -t docker.sparib.com/reminder --push .
     - name: Send update hook
-      uses: distributhor/workflow-webhook@v2
+      uses: navied/secure-webhook@0.2.1
       with:
-        webhook_url: https://docker.sparib.com/
-        webhook_secret: ${{ secrets.WEB_SECRET }}
-        webhook_type: json
+        url: https://docker.sparib.com/
+        hmacSecret: ${{ secrets.WEB_SECRET }}
       
