@@ -26,13 +26,9 @@ console.setFormatter(ColorFormatter('%(asctime)s | %(levelname)s | %(name)s : %(
 console.setLevel(logging.DEBUG)
 logger.addHandler(console)
 
-logger.warning(os.environ)
-
 if 'ENV_FILE' in os.environ:
-    logger.debug(os.environ('ENV_FILE'))
     config, trello = setup_configs(stream=StringIO(os.environ['ENV_FILE']))
 else:
-    logger.debug("no env file")
     config, trello = setup_configs(dotenv_values())
 
 class BotClient(discord.Client):
@@ -114,7 +110,6 @@ class BotClient(discord.Client):
     def reset_day(self) -> None: self.seen_today_desktop = False; self.seen_today_mobile = False; logger.info("Reset")
 
 def main():
-    print(os.environ)
     intents = discord.Intents.default(); intents.typing = False; intents.presences = True; intents.members = True
     client = BotClient(intents=intents)
     loop = asyncio.get_event_loop()
