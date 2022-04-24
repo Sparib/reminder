@@ -30,6 +30,7 @@ if 'ENV_FILE' in os.environ:
     logger.debug(os.environ('ENV_FILE'))
     config, trello = setup_configs(stream=StringIO(os.environ['ENV_FILE']))
 else:
+    logger.info("no env file")
     config, trello = setup_configs(dotenv_values())
 
 class BotClient(discord.Client):
