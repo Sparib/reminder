@@ -27,7 +27,7 @@ console.setLevel(logging.DEBUG)
 logger.addHandler(console)
 
 if 'ENV_FILE' in os.environ:
-    config, trello = setup_configs(stream=StringIO(os.environ['ENV_FILE']))
+    config, trello = setup_configs(dotenv_values(stream=StringIO(os.environ['ENV_FILE'])))
 else:
     config, trello = setup_configs(dotenv_values())
 
