@@ -1,3 +1,4 @@
+from io import StringIO
 from typing import Dict
 import discord
 import logging
@@ -7,6 +8,7 @@ import datetime
 import schedule
 import aiohttp
 import pytz
+import os
 from dotenv import dotenv_values
 from utils import ColorFormatter, setup_configs
 from datetime import datetime
@@ -24,18 +26,19 @@ console.setFormatter(ColorFormatter('%(asctime)s | %(levelname)s | %(name)s : %(
 console.setLevel(logging.DEBUG)
 logger.addHandler(console)
 
-config, trello = setup_configs(dotenv_values())
+if 'ENV_FILE' in os.environ:
+    config, trello = setup_configs(stream=StringIO(os.environ['ENV_FILE']))
+else:
+    config, trello = setup_configs(dotenv_values())
 
 # FIXME: Mobile to desktop handling doesn't work
 # TODO: Write my own time keeper for async stuff bc schedule is terrible
-# Another TODO: Probably make it so that github pushes make the docker file
+# TODO Probably make it so that github pushes make the docker file
 
 class BotClient(discord.Client):
     def __init__(self, *args, **kwargs): 
         super().__init__(*args, **kwargs)
-        self.seen_today_desktop = False
-        self.seen_today_mobile = False
-        self.send_now = True
+        self.seen_today = False
         self.member: discord.Member = None
 
     async def on_ready(self):
@@ -44,28 +47,17 @@ class BotClient(discord.Client):
         self.member = self.get_guild(config["GUILD_ID"]).get_member(config["USER_ID"])
         if self.member is None or self.member is None: raise Exception("ID for Sparib no worko")
         logger.info("Cached user 362355607367581716: " + self.member.name)
-        # await self.get_cards()
-        # await self.close()
+
         if self.member.dm_channel is None: await self.member.create_dm()
         logger.info(self.member.dm_channel)
-        # async for message in self.get_user(362355607367581716).dm_channel.history(): await message.delete(); await asyncio.sleep(1)
+        
         await self.schedules()
 
-    async def on_member_update(self, before: discord.Member, after: discord.Member) -> None:
-        logger.info(f"{after.display_name} updated | Old Status: {before.status} | New Status: {after.status}")
-        logger.info(after.id)
-        if after.id != self.member.id: return
-        if self.seen_today_desktop and self.seen_today_mobile: return
-        if int(datetime.now().hour) < 14: return
-        if str(after.status).lower() != "online": return
-        logger.info(f"{after.mobile_status} {after.desktop_status}")
-        if not self.seen_today_mobile and after.is_on_mobile():
-            # Mobile stuff
-            await self.send_embed()
-        elif not self.seen_today_desktop and str(after.desktop_status).lower() == "online":
-            if not self.seen_today_mobile: await self.send_embed()
-            else: await self.member.send("Check due")
-            self.seen_today_desktop = True
+    async def on_member_update(self, before: discord.Member, after: discord.Member) -> None:        
+        if after.id != self.member.id or self.seen_today or int(datetime.now().hour) < 14 or str(after.status).lower() != "online": return
+
+        await self.send_embed()
+        self.seen_today = True
 
     async def get_cards(self) -> Dict[str, str]:
         dict: Dict = {}
@@ -82,13 +74,13 @@ class BotClient(discord.Client):
             async with session.get(trello["LIST_URL"].format(str(list_id))) as resp:
                 if resp.status != 200: return
                 cards = await resp.json()
-                # logger.info("\n" + json.dumps(cards[0], indent=2))
+                
                 for card in cards:
                     logger.debug(card["name"])
                     # Get a datetime object by parsing the date string, then give it tzinfo of utc, then we can get the timestamp
                     date = datetime.strptime(card["due"], "%Y-%m-%dT%H:%M:%S.000Z").replace(tzinfo=pytz.utc)
                     logger.debug(int(date.timestamp()))
-                    # f"<t:{int(date.timestamp())}:f>"
+                    
                     if len(card["labels"]) == 0:
                         dict[card["name"]] = f"Due <t:{int(date.timestamp())}:t>"
                     else:
@@ -103,25 +95,23 @@ class BotClient(discord.Client):
         cards = (await self.get_cards())
         for name in cards: embed.add_field(name=name, value=cards[name], inline=False)
         await self.member.send(embed=embed)
-        self.seen_today_mobile = True
-        self.send_now = False
         logger.info("Send")
 
     async def schedules(self) -> None:
-        schedule.every().day.at("00:00").do(self.reset_day)
-        schedule.every().day.at("14:00").do(self.was_online)
-        # schedule.every(10).seconds.do(self.was_online)
+        reset_done = False
+        send_done = False
         while True:
-            schedule.run_pending()
-            if self.send_now: (await self.send_embed())
-            await asyncio.sleep(1)
+            time = datetime.now()
+            
+            if time.hour == 0 and not reset_done: self.reset_day(); reset_done = True
+            elif time.hour == 14 and not send_done: await self.send_embed(); send_done = True
+            
+            if time.hour != 0: reset_done = False
+            if time.hour != 14: send_done = False
+
+            await asyncio.sleep(60)
 
     def reset_day(self) -> None: self.seen_today_desktop = False; self.seen_today_mobile = False; logger.info("Reset")
-    def was_online(self) -> None:
-        # logger.info(self.sparib)
-        if str(self.member.status).lower() == "online":
-            self.send_now = True
-            if str(self.member.desktop_status).lower() == "online": self.seen_today_desktop = True
 
 def main():
     intents = discord.Intents.default(); intents.typing = False; intents.presences = True; intents.members = True
