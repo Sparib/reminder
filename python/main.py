@@ -31,8 +31,6 @@ if 'ENV_FILE' in os.environ:
 else:
     config, trello = setup_configs(dotenv_values())
 
-logger.info(config)
-logger.info(trello)
 
 class BotClient(discord.Client):
     def __init__(self, *args, **kwargs): 
@@ -41,6 +39,8 @@ class BotClient(discord.Client):
         self.member: discord.Member = None
 
     async def on_ready(self):
+        logger.info(config)
+        logger.info(trello)
         await self.wait_until_ready()
         logger.info("Successfully logged in to " + self.user.name)
         self.member = self.get_guild(config["GUILD_ID"]).get_member(config["USER_ID"])
