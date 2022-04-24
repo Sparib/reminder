@@ -32,10 +32,6 @@ if 'ENV_FILE' in os.environ:
 else:
     config, trello = setup_configs(dotenv_values())
 
-# FIXME: Mobile to desktop handling doesn't work
-# TODO: Write my own time keeper for async stuff bc schedule is terrible
-# TODO Probably make it so that github pushes make the docker file
-
 class BotClient(discord.Client):
     def __init__(self, *args, **kwargs): 
         super().__init__(*args, **kwargs)
