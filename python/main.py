@@ -41,9 +41,8 @@ class BotClient(discord.Client):
     async def on_ready(self):
         await self.wait_until_ready()
         logger.info("Successfully logged in to " + self.user.name)
-        self.member = self.get_guild(config["GUILD_ID"]).get_member(config["USER_ID"])
-        logger.info(config)
-        logger.info(trello)
+        self.member = self.get_guild(int(config["GUILD_ID"])).get_member(int(config["USER_ID"]))
+        
         if self.member is None or self.member is None: raise Exception("ID for Sparib no worko")
         logger.info("Cached user 362355607367581716: " + self.member.name)
 
