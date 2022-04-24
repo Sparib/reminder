@@ -26,6 +26,8 @@ console.setFormatter(ColorFormatter('%(asctime)s | %(levelname)s | %(name)s : %(
 console.setLevel(logging.DEBUG)
 logger.addHandler(console)
 
+logger.warning(os.environ)
+
 if 'ENV_FILE' in os.environ:
     logger.debug(os.environ('ENV_FILE'))
     config, trello = setup_configs(stream=StringIO(os.environ['ENV_FILE']))
