@@ -54,7 +54,7 @@ class BotClient(discord.Client):
     async def on_member_update(self, before: discord.Member, after: discord.Member) -> None:        
         if after.id != self.member.id or self.seen_today or int(datetime.now().hour) < 14 or str(after.status).lower() != "online": return
 
-        await self.send_embed()
+        await self.member.send("Check due")
         self.seen_today = True
 
     async def get_cards(self) -> Dict[str, str]:
