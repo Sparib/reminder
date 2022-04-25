@@ -68,7 +68,7 @@ class BotClient(discord.Client):
                     if str(list["name"]).lower() == str(trello["LIST"]).lower():
                         list_id = list["id"]
                         break
-            if list_id is None: return # TODO: Handle this
+            if list_id is None: self.send_error("No list ID returned for given list name"); return
             async with session.get(trello["LIST_URL"].format(str(list_id))) as resp:
                 if resp.status != 200: return
                 cards = await resp.json()
@@ -94,6 +94,15 @@ class BotClient(discord.Client):
         for name in cards: embed.add_field(name=name, value=cards[name], inline=False)
         await self.member.send(embed=embed)
         logger.info("Send")
+
+    async def send_error(self, message) -> None:
+        embed = discord.Embed(
+            title="Error",
+            color=0xff0000,
+            description=message
+        )
+        await self.member.send(embed=embed)
+        logger.error(message)
 
     async def schedules(self) -> None:
         reset_done = False
