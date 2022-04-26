@@ -11,6 +11,8 @@ jobs:
   build_docker:
 
     runs-on: ubuntu-latest
+    
+    if: contains(github.event.commits[modified], "python/main.py") || contains(github.event.commits[modified], "python/utils/__init__.py")
 
     steps:
     - uses: actions/checkout@v3
@@ -22,7 +24,6 @@ jobs:
         password: ${{ secrets.REG_PASS }}
     - name: Build the Docker image
       run: docker buildx build -t docker.sparib.com/reminder --push .
-      if: contains(github.event.commits[modified], "python/main.py") || contains(github.event.commits[modified], "python/utils/__init__.py")
     - name: Send update hook
       uses: johannes-huther/webhook.sh@v1.0.0
       env:
