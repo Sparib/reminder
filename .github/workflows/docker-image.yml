@@ -37,10 +37,10 @@ jobs:
       - id: files
         uses: jitterbit/get-changed-files@v1
         with:
-          format: 'json'
+          format: 'csv'
       - run: |
-          readarray -t modified_files <<<"$(jq -r '.[]' <<<'${{ steps.files.outputs.modified }}'"
-          for modified_file in ${modified_files[@]}; do
+          mapfile -d ',' -t modified_files < <(printf '%s,' '${{ steps.files.outputs.modified }}')
+          for modified_file in "${modified_files[@]}"; do
             echo "${modified_file}"
           done
       
