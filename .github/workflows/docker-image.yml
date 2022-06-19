@@ -34,5 +34,5 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - run: echo ${{ github.event.head_commit.modified }}
+      - run: echo ${{ toJSON(github.event.head_commit) }}
       
