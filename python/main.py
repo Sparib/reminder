@@ -125,7 +125,6 @@ def main():
         loop.run_until_complete(client.start(config["TOKEN"]))C
     except KeyboardInterrupt:
         loop.run_until_complete(client.close())
-        # pass
     finally:
         loop.close()
         logging.info("CLOSING")
