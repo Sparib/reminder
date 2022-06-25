@@ -46,7 +46,7 @@ jobs:
           mapfile -d ',' -t modified_files < <(printf '%s,' '${{ steps.files.outputs.modified }}')
           update=false
           for modified_file in "${modified_files[@]}"; do
-            if [[ "${modified_file}" == *"/python/"* ]]; then
+            if [[ "${modified_file}" == *"python/"* ]]; then
               update=true
               break
             fi
