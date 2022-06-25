@@ -122,7 +122,7 @@ def main():
     client = BotClient(intents=intents)
     loop = asyncio.get_event_loop()
     try:
-        loop.run_until_complete(client.start(config["TOKEN"]))C
+        loop.run_until_complete(client.start(config["TOKEN"]))
     except KeyboardInterrupt:
         loop.run_until_complete(client.close())
     finally:
@@ -134,4 +134,3 @@ if __name__ == "__main__":
         main()
     except Exception as e:
         logger.exception(e)
-# yas
