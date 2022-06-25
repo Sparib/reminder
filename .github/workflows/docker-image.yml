@@ -41,7 +41,7 @@ jobs:
         uses: jitterbit/get-changed-files@v1
         with:
           format: 'csv'
-      - id: test_files
+      - id: test_files        
         run: |
           mapfile -d ',' -t modified_files < <(printf '%s,' '${{ steps.files.outputs.modified }}')
           update=false
@@ -52,4 +52,5 @@ jobs:
             fi
           done
           echo "::set-output name=update::${update}"
+          echo "${update}"
       
