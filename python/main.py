@@ -18,9 +18,6 @@ init()
 
 logger = logging.getLogger('discord')
 logger.setLevel(logging.INFO)
-# file = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
-# file.setFormatter(logging.Formatter('%(asctime)s | %(levelname)-8s | %(name)-16s : %(message)s'))
-# logger.addHandler(file)
 console = logging.StreamHandler(sys.stdout)
 console.setFormatter(ColorFormatter('%(asctime)s | %(levelname)s | %(name)s : %(message)s'))
 console.setLevel(logging.DEBUG)
@@ -124,11 +121,8 @@ def main():
     intents = discord.Intents.default(); intents.typing = False; intents.presences = True; intents.members = True
     client = BotClient(intents=intents)
     loop = asyncio.get_event_loop()
-    # loop.run_until_complete(client.get_cards())
-    # return
     try:
-        loop.run_until_complete(client.start(config["TOKEN"]))
-        # loop.run_until_complete(client.schedules())
+        loop.run_until_complete(client.start(config["TOKEN"]))C
     except KeyboardInterrupt:
         loop.run_until_complete(client.close())
         # pass
