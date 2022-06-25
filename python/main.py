@@ -13,7 +13,7 @@ from dotenv import dotenv_values
 from utils import ColorFormatter, setup_configs
 from datetime import datetime
 from colorama import init
-
+#test
 init()
 
 logger = logging.getLogger('discord')
